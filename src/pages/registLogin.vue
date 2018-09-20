@@ -4,7 +4,7 @@
     <el-col :span="8">
       <el-tabs :tab-position="tabPosition">
         <el-tab-pane label="登录">
-          <div class="grid-content bg-purple-light">
+          <div class="grid-content">
               <el-form ref="form" :model="loginform" :rules="rules" label-width="80px">
                   <el-form-item label="手机号" prop="account">
                     <el-input v-model="loginform.account" placeholder="请输入手机号"></el-input>
@@ -17,7 +17,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="注册">
-          <div class="grid-content bg-purple-light">
+          <div class="grid-content">
               <el-form ref="form" :model="registform" :rules="rules" label-width="80px">
                   <el-form-item label="手机号" prop="account">
                     <el-input v-model="registform.account" placeholder="请输入手机号"></el-input>
@@ -34,7 +34,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-col>
-    <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
+    <el-col :span="8"><div class="grid-content"></div></el-col>
    </el-row>
 </template>
 
@@ -44,7 +44,7 @@ export default {
   name: "registLogin",
   data() {
     return {
-      tabPosition: 'left',
+      tabPosition: "left",
       loginform: {
         account: "",
         password: ""
@@ -63,37 +63,6 @@ export default {
     };
   },
   methods: {
-    regist() {
-      let registform = this.registform;
-      if (registform.account.match(this.phoneReg)) {
-        if (registform.password == registform.repass) {
-          if (registform.password.match(this.passReg)) {
-            let md5 = crypto.createHash("md5");
-            md5.update(registform.password);
-            this.$http
-              .post(
-                "/api/user/regist",
-                {
-                  account: registform.account,
-                  password: md5.digest("hex")
-                },
-                {}
-              )
-              .then(response => {
-                if (response.data == -1) {
-                  alert("该用户已存在");
-                }
-              });
-          } else {
-            this.$message("请输入数字字母格式的6-12位密码");
-          }
-        } else {
-          this.$message("两次输入的密码不一致");
-        }
-      } else {
-        this.$message("手机号格式不正确");
-      }
-    },
     login() {
       let loginform = this.loginform;
       if (loginform.account.match(this.phoneReg)) {
@@ -117,8 +86,44 @@ export default {
             }
             if (res.data == 0) {
               this.$message("登陆成功");
+              sessionStorage.setItem("loginUser",loginform.account);
+              this.$router.push({ path: "index" });
             }
           });
+      }
+    },
+    regist() {
+      let registform = this.registform;
+      if (registform.account.match(this.phoneReg)) {
+        if (registform.password == registform.repass) {
+          if (registform.password.match(this.passReg)) {
+            let md5 = crypto.createHash("md5");
+            md5.update(registform.password);
+            this.$http
+              .post(
+                "/api/user/regist",
+                {
+                  account: registform.account,
+                  password: md5.digest("hex")
+                },
+                {}
+              )
+              .then(response => {
+                if (response.data == -1) {
+                  this.$message("该用户已存在");
+                }
+                if (response.data == 0) {
+                  this.$message("注册成功");
+                }
+              });
+          } else {
+            this.$message("请输入数字字母格式的6-12位密码");
+          }
+        } else {
+          this.$message("两次输入的密码不一致");
+        }
+      } else {
+        this.$message("手机号格式不正确");
       }
     }
   }
@@ -128,13 +133,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less">
 .grid-content {
-  border-radius: 4px;
   min-height: 36px;
-}
-ul.tab li {
-  display: inline-block;
-  width: 120px;
-  cursor: pointer;
 }
 </style>
 

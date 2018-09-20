@@ -3,6 +3,7 @@ var express = require("express");
 var router = express.Router();
 var mysql = require("mysql");
 var $sql = require("../sqlMap");
+var session =require('client-session');
 
 //连接数据库
 var conn = mysql.createConnection(models.mysql);
@@ -24,21 +25,21 @@ var searchsql = $sql.user.search;
 router.post("/regist", (req, res) => {
   let params = req.body;
   //查询数据库中是否有相同的account
-  conn.query(searchsql, params.account, function(err, result) {
-    if (err) {
-      console.log("searcherr" + err);
+  conn.query(searchsql, params.account, function(searcherr, searchresult) {
+    if (searcherr) {
+      console.log("searcherr" + searcherr);
     }
-    if (result[0] === undefined) {
+    if (searchresult[0] === undefined) {
       //新增
       conn.query(
         addsql,
         [params.account, params.password, new Date().toLocaleString()],
-        function(err, result) {
-          if (err) {
-            console.log("adderr" + err);
+        function(adderr, addresult) {
+          if (adderr) {
+            console.log("adderr" + adderr);
           }
-          if (result) {
-            jsonWrite(res, result);
+          if (addresult) {
+            // jsonWrite(res, result);
             res.send("0"); //注册成功
           }
         }
@@ -51,25 +52,25 @@ router.post("/regist", (req, res) => {
 //登录
 router.post("/login", (req, res) => {
   let params = req.body;
-  conn.query(searchsql, params.account, function(err, result) {
-    if (err) {
-      console.log("searchErr" + err);
+  conn.query(searchsql, params.account, function(searcherr, searchresult) {
+    if (searcherr) {
+      console.log("searchErr" + searcherr);
     }
-    if (result[0] === undefined) {
+    if (searchresult[0] === undefined) {
       res.send("-1"); //没有该用户
     }
-    if (result[0].password != params.password) {
+    if (searchresult[0].password != params.password) {
       res.send("-2"); //密码错误
     } else {
       conn.query(
         $sql.log.add,
         [params.account, new Date().toLocaleString()],
-        function(err, result) {
-          if (err) {
-            console.log("logErr" + err);
+        function(adderr, addresult) {
+          if (adderr) {
+            console.log("logErr" + adderr);
           }
-          if (result) {
-              console.log(result);
+          if (addresult) {
+            console.log(addresult);
           }
         }
       );
