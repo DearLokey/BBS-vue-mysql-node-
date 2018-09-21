@@ -86,7 +86,7 @@ export default {
             }
             if (res.data == 0) {
               this.$message("登陆成功");
-              sessionStorage.setItem("loginUser",loginform.account);
+              sessionStorage.setItem("loginUser", loginform.account);
               this.$router.push({ path: "index" });
             }
           });

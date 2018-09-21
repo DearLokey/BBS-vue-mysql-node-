@@ -3,7 +3,6 @@ var express = require("express");
 var router = express.Router();
 var mysql = require("mysql");
 var $sql = require("../sqlMap");
-var session =require('client-session');
 
 //连接数据库
 var conn = mysql.createConnection(models.mysql);
@@ -74,6 +73,7 @@ router.post("/login", (req, res) => {
           }
         }
       );
+      res.cookie("account", params.account);
       res.send("0"); //登录成功
     }
   });

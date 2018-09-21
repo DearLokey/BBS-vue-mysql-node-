@@ -11,23 +11,30 @@ conn.connect();
 
 var addsql = $sql.bbs.add;
 var getallsql = $sql.bbs.getAll;
+var getByIdsql = $sql.bbs.getById;
 
 //新增bbs
 router.post("/addBBS", (req, res) => {
   let params = req.body;
   conn.query(
     addsql,
-    [params.title, params.content, new Date().toLocaleString(), "15295532527"],
+    [
+      params.title,
+      params.content,
+      new Date().toLocaleString(),
+      req.cookies.account
+    ],
     function(err, result) {
       if (err) {
         console.log("adderr" + err);
       }
       if (result) {
-        res.send("0"); //注册成功
+        res.send("0");
       }
     }
   );
 });
+
 //所有帖子
 router.get("/getAll", (req, res) => {
   conn.query(getallsql, function(err, result) {
@@ -35,7 +42,20 @@ router.get("/getAll", (req, res) => {
       console.log("getAllerr" + err);
     }
     if (result) {
-      res.send(result); //注册成功
+      res.send(result);
+    }
+  });
+});
+
+//根据id
+router.get("/getBBSById", (req, res) => {
+  let params = req.query;
+  conn.query(getByIdsql, params.id, function(err, result) {
+    if (err) {
+      console.log("getBBSByIderr" + err);
+    }
+    if (result) {
+      res.send(result);
     }
   });
 });

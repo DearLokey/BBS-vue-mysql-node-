@@ -1,9 +1,15 @@
 <template>
     <div class="index">
-         <h2>登录成功</h2>
-         <p>欢迎{{loginUser}}</p>
-        <el-button type="text" @click="dialogFormVisible = true">发帖</el-button>
-        <el-dialog title="发帖" :visible.sync="dialogFormVisible">
+      <div class="loginstatus" v-if="loginUser!=''">
+         <p>当前登录用户：{{loginUser}}</p>
+         <el-button type="text" @click="logout">退出当前账户</el-button>
+      </div>
+        
+        <router-link v-if="loginUser==''" tag="li" to="/">
+          <el-button type="primary">登录</el-button>
+        </router-link>
+        <el-button type="text" @click="BBSdialog = true">发帖</el-button>
+        <el-dialog title="发帖" :visible.sync="BBSdialog">
             <el-form :model="form" :rules="rules">
                 <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
                     <el-input v-model="form.title" autocomplete="off"></el-input>
@@ -13,15 +19,16 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="BBSdialog = false">取 消</el-button>
                 <el-button type="primary" @click="addBBS">确 定</el-button>
             </div>
         </el-dialog>
-        <div v-if="hasBBS">
+        <div class="emptyBBS" v-if="hasBBS">
             暂无数据
         </div>
-        <ul>
-            <li v-for="bbs in bbsList">{{bbs['title']}}
+        <ul class="bbsList">
+            <li v-for="bbs in bbsList">
+                <p @click="bbsDetail(bbs['id'])">{{bbs['title']}}</p>
             </li>
         </ul>
     </div>
@@ -30,7 +37,7 @@
 export default {
   data() {
     return {
-      dialogFormVisible: false,
+      BBSdialog: false,
       form: {
         title: "",
         content: ""
@@ -57,10 +64,17 @@ export default {
         .then(res => {
           if (res.data == "0") {
             this.$message("success");
-            this.dialogFormVisible = false;
+            this.BBSdialog = false;
             location.reload();
           }
         });
+    },
+    logout() {
+      sessionStorage.setItem("loginUser", "");
+      this.$router.push({ path: "/" });
+    },
+    bbsDetail(id) {
+      this.$router.push({ path: "/bbsDetail/" + id });
     }
   },
   mounted: function() {
@@ -77,5 +91,14 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+ul.bbsList {
+  list-style-type: none;
+  text-align: left;
+  text-indent: 20px;
+  cursor: pointer;
+  li {
+    border-bottom: 2px solid gray;
+  }
+}
 </style>
 
