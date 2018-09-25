@@ -7,14 +7,18 @@ var sqlMap = {
   },
   bbs: {
     add:
-      "insert into t_bbs(title,content,create_time,create_account) values (?,?,?,?)",
+      "insert into t_bbs(user_account,title,content,create_time) values (?,?,?,?)",
     getAll: "select * from t_bbs",
     getById: "select * from t_bbs where id = ?"
   },
+  floor:{
+    add:"insert into t_floor(bbs_id,user_account,content,create_time) values (?,?,?,?)", 
+    getByBBSId:"select * from t_floor where bbs_id = ?",
+  },
   comment: {
     add:
-      "insert into t_comment(comment_account,content,comment_time,bbs_id) values (?,?,?,?)",
-    searchByBBSId: "select * from t_comment where bbs_id = ?"
+      "insert into t_comment(user_account,content,create_time,floor_id) values (?,?,?,?)",
+    searchByBBSId: "select * from t_comment where floor_id = ?"
   },
   log: {
     add: "insert into t_log(user_account,login_time) values (?,?)"

@@ -1,39 +1,45 @@
 <template>
-    <div class="index">
-      <div class="loginstatus" v-if="loginUser!=''">
-         <p>当前登录用户：{{loginUser}}</p>
-         <el-button type="text" @click="logout">退出当前账户</el-button>
-      </div>
-        
-        <router-link v-if="loginUser==''" tag="li" to="/">
-          <el-button type="primary">登录</el-button>
-        </router-link>
-        <el-button type="text" @click="BBSdialog = true">发帖</el-button>
-        <el-dialog title="发帖" :visible.sync="BBSdialog">
-            <el-form :model="form" :rules="rules">
-                <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
-                    <el-input v-model="form.title" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
-                    <el-input type="textarea" :rows="2" v-model="form.content" placeholder=""></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="BBSdialog = false">取 消</el-button>
-                <el-button type="primary" @click="addBBS">确 定</el-button>
-            </div>
-        </el-dialog>
+<el-container class="w">
+  <el-header>
+    <bbsheader></bbsheader>
+  </el-header>
+  <el-container>
+    <el-aside width="200px">
+      <el-button type="text" @click="BBSdialog = true">发帖</el-button>
+      <el-dialog title="发帖" :visible.sync="BBSdialog">
+          <el-form :model="form" :rules="rules">
+              <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
+                  <el-input v-model="form.title" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
+                  <el-input type="textarea" :rows="2" v-model="form.content" placeholder=""></el-input>
+              </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+              <el-button @click="BBSdialog = false">取 消</el-button>
+              <el-button type="primary" @click="addBBS">确 定</el-button>
+          </div>
+      </el-dialog>
+    </el-aside>
+    <el-container>
+      <el-main>
         <div class="emptyBBS" v-if="hasBBS">
             暂无数据
         </div>
         <ul class="bbsList">
-            <li v-for="bbs in bbsList">
+            <li class="bbs" v-for="bbs in bbsList">
                 <p @click="bbsDetail(bbs['id'])">{{bbs['title']}}</p>
+                <span>{{bbs['create_time']}}</span>
             </li>
         </ul>
-    </div>
+      </el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
+  </el-container>
+</el-container>
 </template>
 <script>
+import bbsheader from "@/components/head"
 export default {
   data() {
     return {
@@ -52,7 +58,17 @@ export default {
       loginUser: ""
     };
   },
+  components:{
+    bbsheader
+  },
   methods: {
+    logout() {
+      sessionStorage.setItem("loginUser", "");
+      this.$router.push({ path: "/registLogin" });
+    },
+    bbsDetail(id) {
+      this.$router.push({ path: "/bbsDetail/" + id });
+    },
     addBBS() {
       let form = this.form;
       this.$http
@@ -62,20 +78,11 @@ export default {
           {}
         )
         .then(res => {
-          if (res.data == "0") {
-            this.$message("success");
-            this.BBSdialog = false;
-            location.reload();
-          }
+          this.$message("success");
+          this.BBSdialog = false;
+          this.bbsList = res.data;
         });
     },
-    logout() {
-      sessionStorage.setItem("loginUser", "");
-      this.$router.push({ path: "/" });
-    },
-    bbsDetail(id) {
-      this.$router.push({ path: "/bbsDetail/" + id });
-    }
   },
   mounted: function() {
     this.$http.get("/api/bbs/getAll", {}).then(res => {
@@ -90,15 +97,30 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
+<style lang="less">
 ul.bbsList {
   list-style-type: none;
   text-align: left;
   text-indent: 20px;
-  cursor: pointer;
   li {
     border-bottom: 2px solid gray;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    p {
+      cursor: pointer;
+    }
+    span {
+      display: block;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
   }
+}
+.el-aside{
+  opacity: 0.8;
 }
 </style>
 

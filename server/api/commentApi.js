@@ -35,12 +35,19 @@ router.post("/addComment", (req, res) => {
       new Date().toLocaleDateString(),
       params.bbsid
     ],
-    function(err, result) {
-      if (err) {
-        console.log("addCommentErr" + err);
+    function(err1, result1) {
+      if (err1) {
+        console.log("addCommentErr" + err1);
       }
-      if (result) {
-        res.send(result);
+      if (result1) {
+        conn.query(searchByBBSIdsql, params.bbsid, function(err2, result2) {
+          if (err2) {
+            console.log("getCommentByBBSIdErr" + err2);
+          }
+          if (result2) {
+            res.send(result2);
+          }
+        });
       }
     }
   );

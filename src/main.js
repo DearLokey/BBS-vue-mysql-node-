@@ -8,7 +8,6 @@ import store from "./vuex/store"
 import router from "./router";
 import App from "./App";
 import "element-ui/lib/theme-chalk/index.css";
-
 Vue.use(ElementUI);
 Vue.use(VueResource);
 Vue.use(VueRouter)
