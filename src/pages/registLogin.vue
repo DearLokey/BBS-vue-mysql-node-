@@ -5,9 +5,6 @@
   </el-header>
   <el-container>
     <el-main>
-      <el-row>
-        <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="8">
           <el-tabs :tab-position="tabPosition">
             <el-tab-pane label="登录">
               <div class="grid-content">
@@ -39,9 +36,6 @@
               </div>
             </el-tab-pane>
           </el-tabs>
-        </el-col>
-        <el-col :span="8"><div class="grid-content"></div></el-col>
-      </el-row>
     </el-main>
     <el-footer>Footer</el-footer>
   </el-container>

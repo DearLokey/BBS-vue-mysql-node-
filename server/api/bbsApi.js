@@ -81,7 +81,10 @@ router.post("/addFloor", (req, res) => {
         console.log("addFloorErr:" + err1);
       }
       if (result1) {
-        conn.query($sql.floor.getByBBSId, params.bbs_id, function(err2, result2) {
+        conn.query($sql.floor.getByBBSId, params.bbs_id, function(
+          err2,
+          result2
+        ) {
           if (err2) {
             console.log("getAllFloorErr" + err2);
           }
@@ -96,12 +99,27 @@ router.post("/addFloor", (req, res) => {
 //根据id获取bbs的floor
 router.get("/getAllFloor", (req, res) => {
   let params = req.query;
-  conn.query($sql.floor.getByBBSId, params.bbs_id, function(err, result) {
-    if (err) {
-      console.log("getAllFloorErr" + err);
+  conn.query($sql.floor.getByBBSId, params.bbs_id, function(err1, result1) {
+    if (err1) {
+      console.log("getAllFloorErr" + err1);
     }
-    if (result) {
-      res.send(result);
+    if (result1) {
+      result1.forEach(function(item, index) {
+        conn.query($sql.comment.searchByFloorId, item["id"], function(
+          err2,
+          result2
+        ) {
+          if (err2) {
+            console.log("getCommentByBBSIdErr" + err2);
+          }
+          if (result2) {
+            item["commentList"] = result2;
+            if(index == result1.length-1){
+              res.send(result1);
+            }
+          }
+        });
+      });
     }
   });
 });

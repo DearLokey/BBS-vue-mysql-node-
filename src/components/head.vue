@@ -5,10 +5,10 @@
     </router-link>
     <div class="r login" v-if="loginUser">
       <p>登录用户：{{loginUser}}</p>
-      <el-button type="text" @click="logout">注销</el-button>
+      <el-button round @click="logout">注销</el-button>
     </div>
     <div class="r not-login" v-if="loginUser==''">
-      <router-link tag="" to="/">
+      <router-link tag="a" to="/registLogin">
         <el-button type="primary">登录</el-button>
       </router-link>
     </div>
@@ -19,18 +19,19 @@
 export default {
   data() {
     return {
-      loginUser: "",
+      loginUser: ""
     };
+  },
+  mounted: function() {
+    if (sessionStorage.getItem("loginUser")) {
+      this.loginUser = sessionStorage.getItem("loginUser");
+    }
   },
   methods: {
     logout() {
       sessionStorage.setItem("loginUser", "");
-      this.$router.push({ path: "/registLogin" });
-    },
-    
-  },
-  mounted: function() {
-    this.loginUser = sessionStorage.getItem("loginUser");
+      location.reload();
+    }
   }
 };
 </script>
@@ -56,7 +57,7 @@ ul.bbsList {
     }
   }
 }
-div.login{
+div.login {
   display: flex;
   flex-direction: row;
 }

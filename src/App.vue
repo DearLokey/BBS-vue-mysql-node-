@@ -15,7 +15,6 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
 * {
   margin: 0;
@@ -32,32 +31,26 @@ body {
   width: 1200px;
   margin: auto;
 }
-.l{
+.l {
   float: left;
 }
-.r{
+.r {
   float: right;
+}
+.el-container {
+  color: #333;
 }
 .el-header,
 .el-footer {
-  color: #333;
   text-align: center;
-  line-height: 60px;
   background: #ffffff;
 }
 
 .el-aside {
-  color: #333;
   text-align: center;
-  line-height: 200px;
   background: #ffffff;
 }
 
-.el-main {
-  color: #333;
-  text-align: center;
-  line-height: 160px;
-}
 ul {
   list-style-type: none;
 }

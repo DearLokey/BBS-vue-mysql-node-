@@ -5,7 +5,7 @@
   </el-header>
   <el-container>
     <el-aside width="200px">
-      <el-button type="text" @click="BBSdialog = true">发帖</el-button>
+      <el-button type="success" @click="BBSdialog = true" v-if="loginUser">发帖</el-button>
       <el-dialog title="发帖" :visible.sync="BBSdialog">
           <el-form :model="form" :rules="rules">
               <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
@@ -29,20 +29,24 @@
         <ul class="bbsList">
             <li class="bbs" v-for="bbs in bbsList">
                 <p @click="bbsDetail(bbs['id'])">{{bbs['title']}}</p>
-                <span>{{bbs['create_time']}}</span>
+                <p>{{bbs['create_time']|moment("YYYY/MM/DD HH:mm")}}</p>
             </li>
         </ul>
       </el-main>
-      <el-footer>Footer</el-footer>
+      <el-footer>
+        <bbsfooter></bbsfooter>
+      </el-footer>
     </el-container>
   </el-container>
 </el-container>
 </template>
 <script>
-import bbsheader from "@/components/head"
+import bbsheader from "@/components/head";
+import bbsfooter from "@/components/footer";
 export default {
   data() {
     return {
+      loginUser: "",
       BBSdialog: false,
       form: {
         title: "",
@@ -54,18 +58,14 @@ export default {
         content: [{ required: true, message: "请输入内容", trigger: "blur" }]
       },
       bbsList: "",
-      hasBBS: "",
-      loginUser: ""
+      hasBBS: ""
     };
   },
-  components:{
-    bbsheader
+  components: {
+    bbsheader,
+    bbsfooter
   },
   methods: {
-    logout() {
-      sessionStorage.setItem("loginUser", "");
-      this.$router.push({ path: "/registLogin" });
-    },
     bbsDetail(id) {
       this.$router.push({ path: "/bbsDetail/" + id });
     },
@@ -82,7 +82,7 @@ export default {
           this.BBSdialog = false;
           this.bbsList = res.data;
         });
-    },
+    }
   },
   mounted: function() {
     this.$http.get("/api/bbs/getAll", {}).then(res => {
@@ -93,7 +93,9 @@ export default {
         this.hasBBS = true;
       }
     });
-    this.loginUser = sessionStorage.getItem("loginUser");
+    if (sessionStorage.getItem("loginUser")) {
+      this.loginUser = sessionStorage.getItem("loginUser");
+    }
   }
 };
 </script>
@@ -101,26 +103,14 @@ export default {
 ul.bbsList {
   list-style-type: none;
   text-align: left;
-  text-indent: 20px;
   li {
     border-bottom: 2px solid gray;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
+    background: #ffffff;
+    padding: 20px;
     p {
       cursor: pointer;
     }
-    span {
-      display: block;
-      position: absolute;
-      right: 0;
-      bottom: 0;
-    }
   }
-}
-.el-aside{
-  opacity: 0.8;
 }
 </style>
 

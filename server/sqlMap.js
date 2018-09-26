@@ -17,8 +17,8 @@ var sqlMap = {
   },
   comment: {
     add:
-      "insert into t_comment(user_account,content,create_time,floor_id) values (?,?,?,?)",
-    searchByBBSId: "select * from t_comment where floor_id = ?"
+      "insert into t_comment(user_account,content,create_time,floor_id,user_account2) values (?,?,?,?,?)",
+    searchByFloorId: "select * from t_comment where floor_id = ?"
   },
   log: {
     add: "insert into t_log(user_account,login_time) values (?,?)"
