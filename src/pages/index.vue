@@ -93,8 +93,8 @@ export default {
         this.hasBBS = true;
       }
     });
-    if (sessionStorage.getItem("loginUser")) {
-      this.loginUser = sessionStorage.getItem("loginUser");
+    if (localStorage.getItem("loginUser")) {
+      this.loginUser = localStorage.getItem("loginUser");
     }
   }
 };

@@ -32,7 +32,12 @@ router.post("/regist", (req, res) => {
       //新增
       conn.query(
         addsql,
-        [params.account, params.password, new Date().toLocaleString()],
+        [
+          params.account,
+          "default.png",
+          params.password,
+          new Date().toLocaleString()
+        ],
         function(adderr, addresult) {
           if (adderr) {
             console.log("adderr" + adderr);
@@ -69,12 +74,12 @@ router.post("/login", (req, res) => {
             console.log("logErr" + adderr);
           }
           if (addresult) {
-            console.log(addresult);
+            console.log("addLog");
           }
         }
       );
-      res.cookie("account", params.account);
-      res.send("0"); //登录成功
+      res.cookie("loginUser", searchresult[0]);
+      res.send(searchresult[0]['account']); //登录成功
     }
   });
 });

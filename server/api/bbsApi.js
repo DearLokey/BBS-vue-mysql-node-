@@ -19,7 +19,7 @@ router.post("/addBBS", (req, res) => {
   conn.query(
     addsql,
     [
-      req.cookies.account,
+      req.cookies.loginUser.account,
       params.title,
       params.content,
       new Date().toLocaleString()
@@ -56,12 +56,24 @@ router.get("/getAll", (req, res) => {
 //根据id获取bbs
 router.get("/getBBSById", (req, res) => {
   let params = req.query;
-  conn.query(getByIdsql, params.id, function(err, result) {
-    if (err) {
-      console.log("getBBSByIderr" + err);
+  conn.query(getByIdsql, params.id, function(err1, result1) {
+    if (err1) {
+      console.log("getBBSByIderr" + err1);
     }
-    if (result) {
-      res.send(result);
+    if (result1) {
+      conn.query($sql.user.search, result1[0]["user_account"], function(
+        err2,
+        result2
+      ) {
+        if (err2) {
+          console.log("searchUsererr" + err2);
+        }
+        if (result2) {
+          result1["user_head"] = result2[0]['head'];
+          console.log(result1["user_head"])
+          res.send(result1);
+        }
+      });
     }
   });
 });
@@ -72,9 +84,9 @@ router.post("/addFloor", (req, res) => {
     $sql.floor.add,
     [
       params.bbs_id,
-      req.cookies.account,
+      req.cookies.loginUser.account,
       params.content,
-      new Date().toLocaleDateString()
+      new Date().toLocaleString()
     ],
     function(err1, result1) {
       if (err1) {
@@ -96,7 +108,7 @@ router.post("/addFloor", (req, res) => {
     }
   );
 });
-//根据id获取bbs的floor
+//根据id获取bbs的floor和对应的评论
 router.get("/getAllFloor", (req, res) => {
   let params = req.query;
   conn.query($sql.floor.getByBBSId, params.bbs_id, function(err1, result1) {
@@ -114,7 +126,7 @@ router.get("/getAllFloor", (req, res) => {
           }
           if (result2) {
             item["commentList"] = result2;
-            if(index == result1.length-1){
+            if (index == result1.length - 1) {
               res.send(result1);
             }
           }

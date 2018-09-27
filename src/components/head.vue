@@ -23,13 +23,13 @@ export default {
     };
   },
   mounted: function() {
-    if (sessionStorage.getItem("loginUser")) {
-      this.loginUser = sessionStorage.getItem("loginUser");
+    if (localStorage.getItem("loginUser")) {
+      this.loginUser = localStorage.getItem("loginUser");
     }
   },
   methods: {
     logout() {
-      sessionStorage.setItem("loginUser", "");
+      localStorage.setItem("loginUser", "");
       location.reload();
     }
   }
@@ -60,6 +60,7 @@ ul.bbsList {
 div.login {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 </style>
 

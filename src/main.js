@@ -3,17 +3,16 @@
 import Vue from "vue";
 import ElementUI from "element-ui";
 import VueResource from "vue-resource";
-import VueRouter from 'vue-router'
-import store from "./vuex/store"
+import VueRouter from "vue-router";
+import store from "./vuex/store";
 import router from "./router";
 import App from "./App";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.use(ElementUI);
 Vue.use(VueResource);
 Vue.use(VueRouter);
-Vue.use(require('vue-moment')); 
+Vue.use(require("vue-moment"));
 Vue.config.productionTip = false;
-
 
 /* eslint-disable no-new */
 new Vue({

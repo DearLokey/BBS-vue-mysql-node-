@@ -2,7 +2,8 @@
 var sqlMap = {
   // 用户
   user: {
-    add: "insert into t_user(account, password, create_time) values (?, ?, ?)",
+    add:
+      "insert into t_user(account,head, password, create_time) values (?,?, ?, ?)",
     search: "select * from t_user where account = ?"
   },
   bbs: {
@@ -11,9 +12,10 @@ var sqlMap = {
     getAll: "select * from t_bbs",
     getById: "select * from t_bbs where id = ?"
   },
-  floor:{
-    add:"insert into t_floor(bbs_id,user_account,content,create_time) values (?,?,?,?)", 
-    getByBBSId:"select * from t_floor where bbs_id = ?",
+  floor: {
+    add:
+      "insert into t_floor(bbs_id,user_account,content,create_time) values (?,?,?,?)",
+    getByBBSId: "select * from t_floor where bbs_id = ?"
   },
   comment: {
     add:

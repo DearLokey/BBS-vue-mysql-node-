@@ -1,6 +1,6 @@
 <template>
   <div>
-    this is components footer
+    小凶许!大脑斧!梅发怒!小福泥!小海疼!发福蝶!大鸡居!大飞囊!
   </div>
 </template>
 
@@ -17,6 +17,10 @@ export default {
 };
 </script>
 <style lang="less">
-
+div{
+  text-align:center;
+  margin:0 auto;
+  vertical-align:middle;
+}
 </style>
 

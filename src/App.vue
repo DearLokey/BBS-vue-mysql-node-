@@ -10,7 +10,7 @@ export default {
 };
 </script>
 
-<style>
+<style l>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -47,7 +47,7 @@ body {
 }
 
 .el-aside {
-  text-align: center;
+  text-align: left;
   background: #ffffff;
 }
 

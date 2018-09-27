@@ -4,30 +4,39 @@
     <bbsheader></bbsheader>
   </el-header>
   <el-container>
-    <el-aside width="200px"></el-aside>
     <el-container>
       <el-main>
-        <h1 style="font-size:36px;text-align:center">{{bbsDetail.title}}</h1>
-        <p>{{bbsDetail.content}}</p>
-        <el-input v-model="floorInput" placeholder="请输入内容"></el-input>
-        <el-button type="primary" icon="el-icon-edit" circle @click="addFloor"></el-button>
+        <div class="bbscontent">
+          <h1 style="font-size:36px;text-align:center">{{bbsDetail.title}}{{bbsDetail.user_head}}</h1>
+          <img src="" alt="">
+          <p>发帖人:{{bbsDetail.user_account}}</p>
+          <p>内容:{{bbsDetail.content}}</p>
+          <div class="floor r">
+            <span>回复：</span>
+            <el-input v-model="floorInput" placeholder="请输入内容" style="width:400px;"></el-input>
+            <el-button type="primary" icon="el-icon-edit" circle @click="addFloor"></el-button>
+          </div>
+        </div>
         <ul class="floorList">
             <li class="floor" v-for="(floor, floorindex) in floorList">
               <p>floor:{{floorindex+1}}</p>
               <p>用户名:{{floor['user_account']}}</p>
               <p>内容:{{floor['content']}}</p>
+              <el-button type="text" v-show="!commentFlag" @click="showCommentInput">回复</el-button>
+              <el-button type="text" v-show="commentFlag" @click="hideCommentInput">收起回复</el-button>
               <ul class="commentList">
-                <p>评论</p>
+                <h1>评论区</h1>
+                <hr>
                 <li class="comment" v-for="comment in floor['commentList']">
-                  <p>{{comment['user_account']}}：{{comment['content']}}</p>
+                  <p v-if="comment['user_account2']==''">{{comment['user_account']}}：{{comment['content']}}</p>
                   <p v-if="comment['user_account2']">{{comment['user_account']}} 回复 {{comment['user_account2']}}:{{comment['content']}}</p>
                   <el-button type="text" round @click="replyComment(comment['user_account'])">回复</el-button>
                 </li>
+                <div class="comment" v-show="commentFlag">
+                  <el-input placeholder="请输入内容" v-model="commentInput"></el-input>
+                  <el-button type="primary" @click="doComment(floor['id'])">发表</el-button>
+                </div>
               </ul>
-              <div class="comment">
-                <el-input placeholder="请输入内容" v-model="commentInput"></el-input>
-                <el-button type="text" @click="doComment(floor['id'])">发表</el-button>
-              </div>
             </li>
         </ul>
       </el-main>
@@ -41,11 +50,15 @@ import bbsheader from "@/components/head";
 export default {
   data() {
     return {
-      bbsDetail: "",
+      routerParams: this.$route.params.id, //路由参数
+      loginUser: "", //登录用户
+      bbsDetail: "", //帖子详情
       floorList: "", //楼层列表
-      floorInput: "", //楼层狂内容
+      floorInput: "", //楼层框内容
+      commentList: "", //评论列表
       commentInput: "", //评论框内容
-      commentList: "" //评论列表
+      secondComment: false, //二级评论
+      commentFlag: false //评论框是否显示
     };
   },
   components: {
@@ -63,19 +76,44 @@ export default {
           this.floorList = res.data;
         });
     },
+    getAllFloor() {
+      this.$http
+        .get(
+          "/api/bbs/getAllFloor",
+          {
+            params: {
+              bbs_id: this.routerParams
+            }
+          },
+          {}
+        )
+        .then(res => {
+          this.floorList = res.data;
+        });
+    },
+    showCommentInput() {
+      this.commentFlag = true;
+    },
+    hideCommentInput() {
+      this.commentFlag = false;
+    },
     replyComment(commentaccount) {
-      this.commentInput = "回复 " + commentaccount + ":";
+      if (this.loginUser == "") {
+        this.$message("暂未登录");
+      } else {
+        this.commentInput = "回复 " + commentaccount + ":";
+        this.secondComment = true;
+      }
     },
     doComment(id) {
-      if (this.commentInput == "") {
+      if (this.loginUser == "") {
+        this.$message("暂未登录");
+      } else if (this.commentInput == "") {
         this.$message("评论内容不能为空");
       } else {
         let commentcontent;
         let commentaccount;
-        if (
-          this.commentInput.includes("回复") &&
-          this.commentInput.includes(":")
-        ) {
+        if (this.secondComment) {
           let params = this.commentInput.split(":");
           commentaccount = params[0].substring(2, this.commentInput.length - 1);
           commentcontent = params[1];
@@ -83,7 +121,6 @@ export default {
           commentcontent = this.commentInput;
           commentaccount = "";
         }
-        this.$message(commentaccount + commentcontent);
         this.$http
           .post(
             "/api/comment/addComment",
@@ -95,20 +132,19 @@ export default {
             {}
           )
           .then(res => {
-            this.$message("success");
-            this.commentList = res.data;
+            this.getAllFloor();
+            this.commentInput = "";
           });
       }
     }
   },
   mounted: function() {
-    let routerParams = this.$route.params.id;
     this.$http
       .get(
         "/api/bbs/getBBSById",
         {
           params: {
-            id: routerParams
+            id: this.routerParams
           }
         },
         {}
@@ -121,7 +157,7 @@ export default {
         "/api/bbs/getAllFloor",
         {
           params: {
-            bbs_id: routerParams
+            bbs_id: this.routerParams
           }
         },
         {}
@@ -129,15 +165,51 @@ export default {
       .then(res => {
         this.floorList = res.data;
       });
+    if (localStorage.getItem("loginUser")) {
+      this.loginUser = localStorage.getItem("loginUser");
+    }
   }
 };
 </script>
 <style lang="less">
+div.bbscontent {
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  div.floor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  &::after {
+    content: ".";
+    clear: both;
+    display: block;
+    overflow: hidden;
+    font-size: 0;
+    height: 0;
+  }
+}
 ul.floorList {
   li.floor {
     padding: 20px;
     background: #ffffff;
     margin-bottom: 20px;
   }
+}
+ul.commentList {
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  margin: 10px;
+  li.comment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+div.comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>

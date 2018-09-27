@@ -37,7 +37,9 @@
             </el-tab-pane>
           </el-tabs>
     </el-main>
-    <el-footer>Footer</el-footer>
+    <el-footer>
+      <bbsfooter></bbsfooter>
+    </el-footer>
   </el-container>
 </el-container>
 </template>
@@ -45,6 +47,7 @@
 <script>
 import crypto from "crypto";
 import bbsheader from "@/components/head";
+import bbsfooter from "@/components/footer";
 export default {
   name: "registLogin",
   data() {
@@ -68,7 +71,8 @@ export default {
     };
   },
   components: {
-    bbsheader
+    bbsheader,
+    bbsfooter
   },
   methods: {
     login() {
@@ -91,10 +95,9 @@ export default {
             }
             if (res.data == -2) {
               this.$message("密码错误");
-            }
-            if (res.data == 0) {
-              this.$message("登陆成功");
-              sessionStorage.setItem("loginUser", loginform.account);
+            } else {
+              this.$message(res.data);
+              localStorage.setItem("loginUser", res.data);
               this.$router.push({ path: "/" });
             }
           });
