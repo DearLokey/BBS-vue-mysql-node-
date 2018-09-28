@@ -5,6 +5,22 @@
     </router-link>
     <div class="r login" v-if="loginUser">
       <p>登录用户：{{loginUser}}</p>
+      <p v-if="hasAbout">与我相关{{aboutNum}}</p>
+       <el-button type="success" @click="BBSdialog = true" v-if="loginUser">发帖</el-button>
+      <el-dialog title="发帖" :visible.sync="BBSdialog">
+          <el-form :model="form" :rules="rules">
+              <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
+                  <el-input v-model="form.title" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
+                  <el-input type="textarea" :rows="2" v-model="form.content" placeholder=""></el-input>
+              </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+              <el-button @click="BBSdialog = false">取 消</el-button>
+              <el-button type="primary" @click="addBBS">确 定</el-button>
+          </div>
+      </el-dialog>
       <el-button round @click="logout">注销</el-button>
     </div>
     <div class="r not-login" v-if="loginUser==''">
@@ -19,18 +35,51 @@
 export default {
   data() {
     return {
-      loginUser: ""
+      loginUser: "",
+      BBSdialog: false,
+      form: {
+        title: "",
+        content: ""
+      },
+      formLabelWidth: "50px",
+      rules: {
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        content: [{ required: true, message: "请输入内容", trigger: "blur" }]
+      },
+      aboutNum: "", //与我相关
+      hasAbout: ""
     };
   },
   mounted: function() {
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");
     }
+    this.$http.get("/api/comment/getAbout", {}).then(res => {
+      if (res.data.length != 0) {
+        this.aboutNum = res.data.length;
+        this.hasAbout = true;
+      } else {
+        this.hasAbout = false;
+      }
+    });
   },
   methods: {
     logout() {
       localStorage.setItem("loginUser", "");
       location.reload();
+    },
+    addBBS() {
+      let form = this.form;
+      this.$http
+        .post(
+          "/api/bbs/addBBS",
+          { title: form.title, content: form.content },
+          {}
+        )
+        .then(res => {
+          this.BBSdialog = false;
+          this.bbsList = res.data;
+        });
     }
   }
 };

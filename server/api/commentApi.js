@@ -29,9 +29,45 @@ router.post("/addComment", (req, res) => {
         console.log("addCommentErr" + err1);
       }
       if (result1) {
-        res.send(result1);
+        res.send(result1.insertId.toLocaleString());
       }
     }
   );
+});
+// 新增与我相关
+router.post("/addAbout", (req, res) => {
+  let params = req.body;
+  let aboutAccount;
+  if (params.comment_account) {
+    aboutAccount = params.comment_account;
+  } else {
+    aboutAccount = req.cookies.loginUser.account;
+  }
+  conn.query($sql.about.add, [0, params.comment_id, aboutAccount], function(
+    err,
+    result
+  ) {
+    if (err) {
+      console.log("getAboutErr" + err);
+    }
+    if (result) {
+      res.send(result);
+    }
+  });
+});
+//与我相关
+router.get("/getAbout", (req, res) => {
+  conn.query($sql.about.searchNewAbout, req.cookies.loginUser.account, function(
+    err,
+    result
+  ) {
+    if (err) {
+      console.log("getAboutErr" + err);
+    }
+    if (result) {
+      res.send(result);
+      console.log(result);
+    }
+  });
 });
 module.exports = router;

@@ -1,26 +1,26 @@
 <template>
-  <div>
-    小凶许!大脑斧!梅发怒!小福泥!小海疼!发福蝶!大鸡居!大飞囊!
+  <div class="footer">
+    <p>小凶许!大脑斧!梅发怒!小福泥!小海疼!发福蝶!大鸡居!大飞囊!</p>
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-    };
+    return {};
   },
-  mounted: function() {
-  },
-  methods: {
-  }
+  mounted: function() {},
+  methods: {}
 };
 </script>
 <style lang="less">
-div{
-  text-align:center;
-  margin:0 auto;
-  vertical-align:middle;
+div.footer {
+  margin: 0 auto;
+  height: 40px;
+  text-align: center;
+}
+p {
+  vertical-align: middle;
 }
 </style>
 

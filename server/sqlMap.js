@@ -22,6 +22,11 @@ var sqlMap = {
       "insert into t_comment(user_account,content,create_time,floor_id,user_account2) values (?,?,?,?,?)",
     searchByFloorId: "select * from t_comment where floor_id = ?"
   },
+  about:{
+    add:"insert into t_about(is_read,comment_id,user_account) values (?,?,?)",
+    delete:"delete from t_about where is_read = 1",
+    searchNewAbout:"select * from t_about where user_account = ? and is_read = 0"
+  },
   log: {
     add: "insert into t_log(user_account,login_time) values (?,?)"
   }
