@@ -6,7 +6,17 @@
   <el-container>
     <el-aside width="200px">Aside</el-aside>
     <el-container>
-      <el-main>Main</el-main>
+      <el-main>
+        <ul>
+          <li v-for="(item, index) in list">
+            <button @click="show(index)">show</button>
+            <div v-show="flagList[index]">
+              <input v-model="list[index]" />
+              <button @click="submit(index)">提交</button>
+            </div>
+          </li>
+        </ul>
+      </el-main>
       <el-footer>Footer</el-footer>
     </el-container>
   </el-container>
@@ -17,8 +27,28 @@
 
 <script>
 export default {
-  
-}
+  data() {
+    return {
+      flagList: [],
+      list: []
+    };
+  },
+  mounted: function() {
+    for (var i = 0; i < 5; i++) {
+      this.list.push("");
+      this.flagList.push(false);
+    }
+  },
+  methods: {
+    show(index) {
+      this.$set(this.flagList,index,true);
+      console.log(this.flagList)
+    },
+    submit(index) {
+      console.log(this.list[index]);
+    }
+  }
+};
 </script>
 
 <style>

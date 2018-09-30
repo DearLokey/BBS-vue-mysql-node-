@@ -19,7 +19,7 @@ router.post("/addBBS", (req, res) => {
   conn.query(
     addsql,
     [
-      req.cookies.loginUser.account,
+      params.user_account,
       params.title,
       params.content,
       new Date().toLocaleString()
@@ -70,7 +70,7 @@ router.get("/getBBSById", (req, res) => {
         }
         if (result2) {
           result1["user_head"] = result2[0]['head'];
-          console.log(result1["user_head"])
+          console.log(result1)
           res.send(result1);
         }
       });
@@ -84,7 +84,7 @@ router.post("/addFloor", (req, res) => {
     $sql.floor.add,
     [
       params.bbs_id,
-      req.cookies.loginUser.account,
+      params.user_account,
       params.content,
       new Date().toLocaleString()
     ],

@@ -5,8 +5,9 @@
     </router-link>
     <div class="r login" v-if="loginUser">
       <p>登录用户：{{loginUser}}</p>
-      <p v-if="hasAbout">与我相关{{aboutNum}}</p>
-       <el-button type="success" @click="BBSdialog = true" v-if="loginUser">发帖</el-button>
+      <el-button type="danger" v-if="hasAbout">新消息：{{aboutNum}}</el-button>
+      <el-button type="success" @click="BBSdialog = true" v-if="loginUser">发帖</el-button>
+      <el-button @click="logout">注销</el-button>
       <el-dialog title="发帖" :visible.sync="BBSdialog">
           <el-form :model="form" :rules="rules">
               <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
@@ -21,7 +22,6 @@
               <el-button type="primary" @click="addBBS">确 定</el-button>
           </div>
       </el-dialog>
-      <el-button round @click="logout">注销</el-button>
     </div>
     <div class="r not-login" v-if="loginUser==''">
       <router-link tag="a" to="/registLogin">
@@ -54,14 +54,20 @@ export default {
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");
     }
-    this.$http.get("/api/comment/getAbout", {}).then(res => {
-      if (res.data.length != 0) {
-        this.aboutNum = res.data.length;
-        this.hasAbout = true;
-      } else {
-        this.hasAbout = false;
-      }
-    });
+    this.$http
+      .get("/api/comment/getAbout", {
+        params: {
+          user_account: this.loginUser
+        }
+      })
+      .then(res => {
+        if (res.data.length != 0) {
+          this.aboutNum = res.data.length;
+          this.hasAbout = true;
+        } else {
+          this.hasAbout = false;
+        }
+      });
   },
   methods: {
     logout() {
@@ -73,7 +79,11 @@ export default {
       this.$http
         .post(
           "/api/bbs/addBBS",
-          { title: form.title, content: form.content },
+          {
+            title: form.title,
+            content: form.content,
+            user_account: this.loginUser
+          },
           {}
         )
         .then(res => {

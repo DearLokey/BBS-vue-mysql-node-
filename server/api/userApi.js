@@ -78,8 +78,7 @@ router.post("/login", (req, res) => {
           }
         }
       );
-      res.cookie("loginUser", searchresult[0]);
-      res.send(searchresult[0]['account']); //登录成功
+      res.send(searchresult[0]["account"]); //登录成功
     }
   });
 });

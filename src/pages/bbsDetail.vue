@@ -22,19 +22,19 @@
               <p>floor:{{floorindex+1}}</p>
               <p>用户名:{{floor['user_account']}}</p>
               <p>内容:{{floor['content']}}</p>
-              <el-button type="text" v-show="!commentFlag" @click="showCommentInput">回复</el-button>
-              <el-button type="text" v-show="commentFlag" @click="hideCommentInput">收起回复</el-button>
+              <el-button type="text" v-show="!commentFlag[floorindex]" @click="showCommentInput(floorindex)">回复</el-button>
+              <el-button type="text" v-show="commentFlag[floorindex]" @click="hideCommentInput(floorindex)">收起回复</el-button>
               <ul class="commentList">
                 <h1>评论区</h1>
                 <hr>
                 <li class="comment" v-for="comment in floor['commentList']">
                   <p v-if="comment['user_account2']==''">{{comment['user_account']}}：{{comment['content']}}</p>
                   <p v-if="comment['user_account2']">{{comment['user_account']}} 回复 {{comment['user_account2']}}:{{comment['content']}}</p>
-                  <el-button type="text" round @click="replyComment(comment['user_account'])">回复</el-button>
+                  <el-button type="text" round @click="replyComment(comment['user_account'],floorindex)">回复</el-button>
                 </li>
-                <div class="comment" v-show="commentFlag">
+                <div class="comment" v-if="commentFlag[floorindex]">
                   <el-input placeholder="请输入内容" v-model="commentInput[floorindex]"></el-input>
-                  <el-button type="primary" @click="doComment(floor['id'])">发表</el-button>
+                  <el-button type="primary" @click="doComment(floor['id'],floorindex)">发表</el-button>
                 </div>
               </ul>
             </li>
@@ -59,7 +59,7 @@ export default {
       commentList: "", //评论列表
       commentInput: [], //评论框数组
       secondComment: false, //二级评论
-      commentFlag: false //评论框是否显示
+      commentFlag: [] //评论框是否显示
     };
   },
   components: {
@@ -71,7 +71,11 @@ export default {
       this.$http
         .post(
           "/api/bbs/addFloor",
-          { bbs_id: this.bbsDetail.id, content: this.floorInput },
+          {
+            user_account: this.loginUser,
+            bbs_id: this.bbsDetail.id,
+            content: this.floorInput
+          },
           {}
         )
         .then(res => {
@@ -93,52 +97,54 @@ export default {
           this.floorList = res.data;
         });
     },
-    showCommentInput() {
-      this.commentFlag = true;
+    showCommentInput(floorindex) {
+      this.$set(this.commentFlag, floorindex, true);
     },
-    hideCommentInput() {
-      this.commentFlag = false;
+    hideCommentInput(floorindex) {
+      this.$set(this.commentFlag, floorindex, false);
     },
-    replyComment(commentaccount) {
+    replyComment(commentaccount, floorindex) {
       if (this.loginUser == "") {
         this.$message("暂未登录");
       } else {
-        this.commentInput = "回复 " + commentaccount + ":";
+        this.commentFlag[floorindex] = true;
+        this.commentInput[floorindex] = "回复 " + commentaccount + ":";
         this.secondComment = true;
       }
     },
-    doComment(id) {
+    doComment(floorid, floorIndex) {
       if (this.loginUser == "") {
         this.$message("暂未登录");
-      } else if (this.commentInput[id] == "") {
+      } else if (this.commentInput[floorIndex] == "") {
         this.$message("评论内容不能为空");
       } else {
         let commentcontent;
         let commentaccount;
         if (this.secondComment) {
-          let params = this.commentInput[id].split(":");
+          let params = this.commentInput[floorIndex].split(":");
           commentaccount = params[0].substring(
             2,
-            this.commentInput[id].length - 1
+            this.commentInput[floorIndex].length - 1
           );
           commentcontent = params[1];
         } else {
-          commentcontent = this.commentInput[id];
+          commentcontent = this.commentInput[floorIndex];
           commentaccount = "";
         }
         this.$http
           .post(
             "/api/comment/addComment",
             {
-              floorid: id,
+              floorid: floorid,
               content: commentcontent,
-              commentaccount: commentaccount
+              commentaccount: commentaccount,
+              user_account: this.loginUser
             },
             {}
           )
           .then(res => {
             this.getAllFloor();
-            this.commentInput[id] = "";
+            this.commentInput[floorIndex] = "";
             this.$http
               .post(
                 "/api/comment/addAbout",
@@ -179,7 +185,10 @@ export default {
       )
       .then(res => {
         this.floorList = res.data;
-        this.commentInput.length = this.floorList.length;
+        for (var i = 0; i < this.floorList.length; i++) {
+          this.commentInput.push("");
+          this.commentFlag.push(false);
+        }
       });
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");

@@ -18,7 +18,7 @@ router.post("/addComment", (req, res) => {
   conn.query(
     addcommentsql,
     [
-      req.cookies.loginUser.account,
+      params.user_account,
       params.content,
       new Date().toLocaleString(),
       params.floorid,
@@ -41,7 +41,7 @@ router.post("/addAbout", (req, res) => {
   if (params.comment_account) {
     aboutAccount = params.comment_account;
   } else {
-    aboutAccount = req.cookies.loginUser.account;
+    aboutAccount = params.user_account;
   }
   conn.query($sql.about.add, [0, params.comment_id, aboutAccount], function(
     err,
@@ -57,7 +57,8 @@ router.post("/addAbout", (req, res) => {
 });
 //与我相关
 router.get("/getAbout", (req, res) => {
-  conn.query($sql.about.searchNewAbout, req.cookies.loginUser.account, function(
+  let params = req.query;
+  conn.query($sql.about.searchNewAbout, params.user_account, function(
     err,
     result
   ) {
@@ -65,8 +66,8 @@ router.get("/getAbout", (req, res) => {
       console.log("getAboutErr" + err);
     }
     if (result) {
-      res.send(result);
       console.log(result);
+      res.send(result);
     }
   });
 });
