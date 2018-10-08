@@ -1,48 +1,43 @@
 <template>
-<el-container class="w">
+<el-container>
   <el-header>
     <bbsheader></bbsheader>
   </el-header>
-  <el-container>
-    <el-container>
-      <el-main>
-        <div class="bbscontent">
-          <h1 style="font-size:36px;text-align:center">{{bbsDetail.title}}{{bbsDetail.user_head}}</h1>
-          <img src="" alt="">
-          <p>发帖人:{{bbsDetail.user_account}}</p>
-          <p>内容:{{bbsDetail.content}}</p>
-          <div class="floor r">
-            <span>回复：</span>
-            <el-input v-model="floorInput" placeholder="请输入内容" style="width:400px;"></el-input>
-            <el-button type="primary" icon="el-icon-edit" circle @click="addFloor"></el-button>
-          </div>
-        </div>
-        <ul class="floorList">
-            <li class="floor" v-for="(floor, floorindex) in floorList">
-              <p>floor:{{floorindex+1}}</p>
-              <p>用户名:{{floor['user_account']}}</p>
-              <p>内容:{{floor['content']}}</p>
-              <el-button type="text" v-show="!commentFlag[floorindex]" @click="showCommentInput(floorindex)">回复</el-button>
-              <el-button type="text" v-show="commentFlag[floorindex]" @click="hideCommentInput(floorindex)">收起回复</el-button>
-              <ul class="commentList">
-                <h1>评论区</h1>
-                <hr>
-                <li class="comment" v-for="comment in floor['commentList']">
-                  <p v-if="comment['user_account2']==''">{{comment['user_account']}}：{{comment['content']}}</p>
-                  <p v-if="comment['user_account2']">{{comment['user_account']}} 回复 {{comment['user_account2']}}:{{comment['content']}}</p>
-                  <el-button type="text" round @click="replyComment(comment['user_account'],floorindex)">回复</el-button>
-                </li>
-                <div class="comment" v-if="commentFlag[floorindex]">
-                  <el-input placeholder="请输入内容" v-model="commentInput[floorindex]"></el-input>
-                  <el-button type="primary" @click="doComment(floor['id'],floorindex)">发表</el-button>
-                </div>
-              </ul>
+  <el-main class="w">
+    <div class="bbscontent">
+      <h1 class="bbstitle">{{bbsDetail.title}}{{bbsDetail.user_head}}</h1>
+      <p class="bbsinfo"><span class="time">发布于{{bbsDetail.create_time|moment("YYYY/MM/DD HH:mm")}}</span> 作者:{{bbsDetail.user_account}}</p>
+      <div class="floor">
+        <el-input v-model="floorInput" placeholder="请输入内容" style="width:400px;"></el-input>
+        <el-button type="primary" @click="addFloor">回复</el-button>
+      </div>
+      <hr>
+      <p class="bbscontent">{{bbsDetail.content}}</p>
+    </div>
+    <ul class="floorList">
+        <li class="floor" v-for="(floor, floorindex) in floorList">
+          <p>floor:{{floorindex+1}}</p>
+          <p>用户名:{{floor['user_account']}}</p>
+          <p>内容:{{floor['content']}}</p>
+          <el-button type="text" v-show="!commentFlag[floorindex]" @click="showCommentInput(floorindex)">回复</el-button>
+          <el-button type="text" v-show="commentFlag[floorindex]" @click="hideCommentInput(floorindex)">收起回复</el-button>
+          <ul class="commentList" v-if="floor['commentList'].length>0">
+            <h1>评论区</h1>
+            <hr>
+            <li class="comment" v-for="comment in floor['commentList']">
+              <p v-if="comment['user_account2']==''">{{comment['user_account']}}：{{comment['content']}}</p>
+              <p v-if="comment['user_account2']">{{comment['user_account']}} 回复 {{comment['user_account2']}}:{{comment['content']}}</p>
+              <el-button type="text" round @click="replyComment(comment['user_account'],floorindex)">回复</el-button>
             </li>
-        </ul>
-      </el-main>
-      <el-footer><bbsfooter></bbsfooter></el-footer>
-    </el-container>
-  </el-container>
+          </ul>
+          <div class="comment" v-if="commentFlag[floorindex]">
+              <el-input placeholder="请输入内容" v-model="commentInput[floorindex]"></el-input>
+              <el-button type="primary" @click="doComment(floor['id'],floorindex,bbsDetail.id)">发表</el-button>
+            </div>
+        </li>
+    </ul>
+  </el-main>
+  <el-footer><bbsfooter></bbsfooter></el-footer>
 </el-container>
 </template>
 <script>
@@ -107,12 +102,13 @@ export default {
       if (this.loginUser == "") {
         this.$message("暂未登录");
       } else {
+        this.secondComment = true;
+        this.$set(this.commentFlag, floorindex, true);
         this.commentFlag[floorindex] = true;
         this.commentInput[floorindex] = "回复 " + commentaccount + ":";
-        this.secondComment = true;
       }
     },
-    doComment(floorid, floorIndex) {
+    doComment(floorid, floorIndex,bbsid) {
       if (this.loginUser == "") {
         this.$message("暂未登录");
       } else if (this.commentInput[floorIndex] == "") {
@@ -136,6 +132,7 @@ export default {
             "/api/comment/addComment",
             {
               floorid: floorid,
+              bbsid:bbsid,
               content: commentcontent,
               commentaccount: commentaccount,
               user_account: this.loginUser
@@ -197,6 +194,16 @@ export default {
 };
 </script>
 <style lang="less">
+h1.bbstitle {
+  font-size: 36px;
+}
+p.bbsinfo {
+  padding: 10px 5px;
+}
+p.bbscontent {
+  font-size: 24px;
+  padding: 20px 10px;
+}
 div.bbscontent {
   background: #ffffff;
   padding: 20px;
@@ -205,6 +212,7 @@ div.bbscontent {
     display: flex;
     flex-direction: row;
     align-items: center;
+    padding: 20px 0;
   }
   &::after {
     content: ".";
@@ -223,9 +231,10 @@ ul.floorList {
   }
 }
 ul.commentList {
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
   padding: 20px;
   margin: 10px;
+  border-radius: 10px;
   li.comment {
     display: flex;
     flex-direction: row;

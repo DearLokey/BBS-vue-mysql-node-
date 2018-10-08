@@ -3,7 +3,7 @@ import Router from "vue-router";
 import registLogin from "@/pages/registLogin";
 import index from "@/pages/index";
 import bbsdetail from "@/pages/bbsDetail";
-import test from "@/pages/test"
+import about from "@/pages/about";
 
 Vue.use(Router);
 
@@ -12,21 +12,22 @@ export default new Router({
     {
       path: "/",
       name: "index",
-      component: index 
+      component: index
     },
     {
       path: "/registLogin",
       name: "registLogin",
-      component: registLogin,
+      component: registLogin
     },
     {
-      path:'/bbsDetail/:id',
-      name:'bbsDetail',
-      component:bbsdetail,
+      path: "/bbsDetail/:id",
+      name: "bbsDetail",
+      component: bbsdetail
     },
     {
-      path:'/test',
-      component:test
+      path: "/about",
+      name: "about",
+      component: about
     }
   ]
 });

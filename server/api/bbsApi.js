@@ -70,7 +70,6 @@ router.get("/getBBSById", (req, res) => {
         }
         if (result2) {
           result1["user_head"] = result2[0]['head'];
-          console.log(result1)
           res.send(result1);
         }
       });

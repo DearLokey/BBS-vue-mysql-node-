@@ -1,46 +1,44 @@
 <template>
-<el-container class="w">
+<el-container>
   <el-header>
     <bbsheader></bbsheader>
   </el-header>
-  <el-container>
-    <el-main>
-          <el-tabs :tab-position="tabPosition">
-            <el-tab-pane label="登录">
-              <div class="grid-content">
-                  <el-form ref="form" :model="loginform" :rules="rules" label-width="80px">
-                      <el-form-item label="手机号" prop="account">
-                        <el-input v-model="loginform.account" placeholder="请输入手机号"></el-input>
-                      </el-form-item>
-                      <el-form-item label="密码" prop="password">
-                        <el-input v-model="loginform.password" type="password" placeholder="请输入密码"></el-input>
-                      </el-form-item>
-                      <el-button type="primary" round @click="login">登录</el-button>
-                  </el-form>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="注册">
-              <div class="grid-content">
-                  <el-form ref="form" :model="registform" :rules="rules" label-width="80px">
-                      <el-form-item label="手机号" prop="account">
-                        <el-input v-model="registform.account" placeholder="请输入手机号"></el-input>
-                      </el-form-item>
-                      <el-form-item label="密码" prop="password">
-                        <el-input v-model="registform.password" type="password" placeholder="请输入密码"></el-input>
-                      </el-form-item>
-                      <el-form-item label="确认密码" prop="password">
-                        <el-input v-model="registform.repass" type="password" placeholder="再次输入密码"></el-input>
-                      </el-form-item>
-                      <el-button type="primary" round @click="regist">注册</el-button>
-                  </el-form>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-    </el-main>
-    <el-footer>
-      <bbsfooter></bbsfooter>
-    </el-footer>
-  </el-container>
+  <el-main class="w">
+        <el-tabs :tab-position="tabPosition">
+          <el-tab-pane label="登录">
+            <div class="grid-content">
+                <el-form ref="form" :model="loginform" :rules="rules" label-width="80px">
+                    <el-form-item label="手机号" prop="account">
+                      <el-input v-model="loginform.account" placeholder="请输入手机号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                      <el-input v-model="loginform.password" type="password" placeholder="请输入密码"></el-input>
+                    </el-form-item>
+                    <el-button type="primary" round @click="login">登录</el-button>
+                </el-form>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="注册">
+            <div class="grid-content">
+                <el-form ref="form" :model="registform" :rules="rules" label-width="80px">
+                    <el-form-item label="手机号" prop="account">
+                      <el-input v-model="registform.account" placeholder="请输入手机号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                      <el-input v-model="registform.password" type="password" placeholder="请输入密码"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="password">
+                      <el-input v-model="registform.repass" type="password" placeholder="再次输入密码"></el-input>
+                    </el-form-item>
+                    <el-button type="primary" round @click="regist">注册</el-button>
+                </el-form>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+  </el-main>
+  <el-footer>
+    <bbsfooter></bbsfooter>
+  </el-footer>
 </el-container>
 </template>
 
@@ -90,13 +88,11 @@ export default {
             {}
           )
           .then(res => {
-            if (res.data == -1) {
+            if (res.data == "-1") {
               this.$message("没有该用户");
-            }
-            if (res.data == -2) {
+            } else if (res.data == "-2") {
               this.$message("密码错误");
             } else {
-              this.$message(res.data);
               localStorage.setItem("loginUser", res.data);
               this.$router.push({ path: "/" });
             }
@@ -155,9 +151,24 @@ export default {
   box-sizing: border-box; /*为元素指定的任何内边距和边框都将在已设定的宽度和高度内进行绘制*/
   min-height: 700px;
 }
-.el-footer {
+.el-main{
+  margin-top: 100px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6)
+}
+.el-form{
+  position: relative;
   height: 300px;
-  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.el-button{
+  width: 100px;
+  position: absolute;
+  bottom: 0;
 }
 </style>
 

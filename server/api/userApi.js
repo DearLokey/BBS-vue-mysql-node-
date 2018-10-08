@@ -60,25 +60,31 @@ router.post("/login", (req, res) => {
     if (searcherr) {
       console.log("searchErr" + searcherr);
     }
-    if (searchresult[0] === undefined) {
-      res.send("-1"); //没有该用户
-    }
-    if (searchresult[0].password != params.password) {
-      res.send("-2"); //密码错误
-    } else {
-      conn.query(
-        $sql.log.add,
-        [params.account, new Date().toLocaleString()],
-        function(adderr, addresult) {
-          if (adderr) {
-            console.log("logErr" + adderr);
+    if (searchresult) {
+      if (searchresult[0] == null) {
+        res.send("-1"); //没有该用户
+        console.log("meiyou ");
+      } else if (
+        searchresult[0] != null &&
+        searchresult[0].password != params.password
+      ) {
+        res.send("-2"); //密码错误
+        console.log("mimacuowu")
+      } else {
+        conn.query(
+          $sql.log.add,
+          [params.account, new Date().toLocaleString()],
+          function(adderr, addresult) {
+            if (adderr) {
+              console.log("logErr" + adderr);
+            }
+            if (addresult) {
+              console.log("addLog");
+            }
           }
-          if (addresult) {
-            console.log("addLog");
-          }
-        }
-      );
-      res.send(searchresult[0]["account"]); //登录成功
+        );
+        res.send(searchresult[0]["account"]); //登录成功
+      }
     }
   });
 });

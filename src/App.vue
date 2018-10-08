@@ -45,12 +45,9 @@ body {
   text-align: center;
   background: #ffffff;
 }
-
-.el-aside {
-  text-align: left;
-  background: #ffffff;
+.el-footer{
+  width: 100%;
 }
-
 ul {
   list-style-type: none;
 }

@@ -1,9 +1,9 @@
 <template>
-<el-container class="w">
+<el-container>
   <el-header>
     <bbsheader></bbsheader>
   </el-header>
-  <el-main>
+  <el-main class="w"> 
     <div class="emptyBBS" v-if="hasBBS">
         暂无数据
     </div>
@@ -34,11 +34,6 @@ export default {
     bbsheader,
     bbsfooter
   },
-  methods: {
-    bbsDetail(id) {
-      this.$router.push({ path: "/bbsDetail/" + id });
-    },
-  },
   mounted: function() {
     this.$http.get("/api/bbs/getAll", {}).then(res => {
       if (res.data.length != 0) {
@@ -51,7 +46,12 @@ export default {
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");
     }
-  }
+  },
+  methods: {
+    bbsDetail(id) {
+      this.$router.push({ path: "/bbsDetail/" + id });
+    }
+  },
 };
 </script>
 <style lang="less">

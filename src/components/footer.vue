@@ -10,17 +10,42 @@ export default {
     return {};
   },
   mounted: function() {},
-  methods: {}
+  methods: {},
+  created() {
+    $(function() {
+      footerAuto();
+    });
+    function footerAuto() {
+      var _wh = $(window).height();
+      var _dh = $(document).height();
+      var _bh = $(document.body).height();
+      if (_bh < _wh) {
+        $(".el-footer").css({
+          position: "fixed",
+          bottom: "0",
+          left: "0"
+        });
+      } else {
+        $(".el-footer").css({
+          position: "static",
+          bottom: "auto",
+          left: "auto"
+        });
+      }
+    }
+  }
 };
 </script>
 <style lang="less">
-div.footer {
-  margin: 0 auto;
-  height: 40px;
-  text-align: center;
-}
-p {
-  vertical-align: middle;
-}
+// div.footer {
+//   margin: 0 auto;
+//   height: 40px;
+//   width: 100%;
+//   p {
+//     position: absolute;
+//     top: 50%;
+//     margin-top: -20px;
+//   }
+// }
 </style>
 

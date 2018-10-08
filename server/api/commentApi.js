@@ -21,6 +21,7 @@ router.post("/addComment", (req, res) => {
       params.user_account,
       params.content,
       new Date().toLocaleString(),
+      params.bbsid,
       params.floorid,
       params.commentaccount
     ],
@@ -58,6 +59,7 @@ router.post("/addAbout", (req, res) => {
 //与我相关
 router.get("/getAbout", (req, res) => {
   let params = req.query;
+  console.log(params.user_account==15295532565)
   conn.query($sql.about.searchNewAbout, params.user_account, function(
     err,
     result
@@ -66,8 +68,44 @@ router.get("/getAbout", (req, res) => {
       console.log("getAboutErr" + err);
     }
     if (result) {
-      console.log(result);
+      // result.forEach((element, index) => {
+      //   conn.query($sql.comment.searchById, element["comment_id"], function(
+      //     err1,
+      //     result1
+      //   ) {
+      //     if (err1) {
+      //       console.log("getcommentbyabout" + err1);
+      //     }
+      //     if (result1) {
+      //       element["commentDetail"] = result1[0];
+      //       conn.query($sql.bbs.getById, result1[0].bbs_id, function(
+      //         err2,
+      //         result2
+      //       ) {
+      //         if (err2) {
+      //           console.log("getbbsbyid" + err2);
+      //         }
+      //         if (result2) {
+      //           element["bbsDetail"] = result2[0];
+      //           if (index == result.length - 1) {
       res.send(result);
+      //             console.log(result);
+      //           }
+      //         }
+      //       });
+      //     }
+      //   });
+      // });
+    }
+  });
+});
+router.post("/updateAbout", (req, res) => {
+  let params = req.body;
+  conn.query($sql.about.update, params.about_id, function(err, result) {
+    if (err) {
+      console.log("update" + err);
+    }
+    if (result) {
     }
   });
 });

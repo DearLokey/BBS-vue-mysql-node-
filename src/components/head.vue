@@ -1,11 +1,13 @@
 <template>
-  <div>
+  <div class="header">
     <router-link to="/" class="l">
-      <img src="../assets/images/logo.png" alt="" width="60px" height="60px">
+      <img src="../assets/images/logo.png" alt="" width="50px" height="50px">
     </router-link>
     <div class="r login" v-if="loginUser">
       <p>登录用户：{{loginUser}}</p>
-      <el-button type="danger" v-if="hasAbout">新消息：{{aboutNum}}</el-button>
+      <router-link to="/about">
+        <el-button type="danger" v-if="hasAbout">新消息：{{aboutNum}}</el-button>
+      </router-link>
       <el-button type="success" @click="BBSdialog = true" v-if="loginUser">发帖</el-button>
       <el-button @click="logout">注销</el-button>
       <el-dialog title="发帖" :visible.sync="BBSdialog">
@@ -63,6 +65,7 @@ export default {
       .then(res => {
         if (res.data.length != 0) {
           this.aboutNum = res.data.length;
+          console.log("aboutNum"+this.aboutNum)
           this.hasAbout = true;
         } else {
           this.hasAbout = false;
@@ -95,6 +98,9 @@ export default {
 };
 </script>
 <style lang="less">
+div.header {
+  margin-top: 10px;
+}
 ul.bbsList {
   list-style-type: none;
   text-align: left;
@@ -116,10 +122,11 @@ ul.bbsList {
     }
   }
 }
-div.login {
+div.r {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 }
 </style>
 
