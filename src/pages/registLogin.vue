@@ -75,28 +75,14 @@ export default {
   methods: {
     login() {
       let loginform = this.loginform;
+      let account = loginform.account;
       if (loginform.account.match(this.phoneReg)) {
         let md5 = crypto.createHash("md5");
         md5.update(loginform.password);
-        this.$http
-          .post(
-            "/api/user/login",
-            {
-              account: loginform.account,
-              password: md5.digest("hex")
-            },
-            {}
-          )
-          .then(res => {
-            if (res.data == "-1") {
-              this.$message("没有该用户");
-            } else if (res.data == "-2") {
-              this.$message("密码错误");
-            } else {
-              localStorage.setItem("loginUser", res.data);
-              this.$router.push({ path: "/" });
-            }
-          });
+        let password = md5.digest("hex");
+        this.$store.dispatch("login", [account, password]);
+      } else {
+        this.$message("请输入正确的手机号");
       }
     },
     regist() {
@@ -151,13 +137,13 @@ export default {
   box-sizing: border-box; /*为元素指定的任何内边距和边框都将在已设定的宽度和高度内进行绘制*/
   min-height: 700px;
 }
-.el-main{
+.el-main {
   margin-top: 100px;
   background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6)
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
 }
-.el-form{
+.el-form {
   position: relative;
   height: 300px;
   display: flex;
@@ -165,7 +151,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.el-button{
+.el-button {
   width: 100px;
   position: absolute;
   bottom: 0;

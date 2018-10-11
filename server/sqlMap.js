@@ -27,7 +27,7 @@ var sqlMap = {
     add:"insert into t_about(is_read,comment_id,user_account) values (?,?,?)",
     update:"update t_about set is_read = 1 where id = ?",
     delete:"delete from t_about where is_read = 1",
-    searchNewAbout:"select * from t_about where user_account = ? and is_read = 0"
+    searchStatus:"select * from t_about where user_account = ? and is_read = 0"
   },
   log: {
     add: "insert into t_log(user_account,login_time) values (?,?)"

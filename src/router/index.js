@@ -1,9 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
-import registLogin from "@/pages/registLogin";
-import index from "@/pages/index";
-import bbsdetail from "@/pages/bbsDetail";
-import about from "@/pages/about";
+
+const index = r => require.ensure([], () => r(require('@/pages/index')), 'index')
+const registLogin = r => require.ensure([], () => r(require('@/pages/registLogin')), 'registLogin')
+const bbsdetail = r => require.ensure([], () => r(require('@/pages/bbsdetail')), 'bbsdetail')
+const about = r => require.ensure([], () => r(require('@/pages/about')), 'about')
 
 Vue.use(Router);
 

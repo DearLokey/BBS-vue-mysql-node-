@@ -44,7 +44,7 @@
 import bbsheader from "@/components/head";
 import bbsfooter from "@/components/footer";
 export default {
-  data() {
+  data: function() {
     return {
       routerParams: this.$route.params.id, //路由参数
       loginUser: "", //登录用户
@@ -63,19 +63,23 @@ export default {
   },
   methods: {
     addFloor() {
-      this.$http
-        .post(
-          "/api/bbs/addFloor",
-          {
-            user_account: this.loginUser,
-            bbs_id: this.bbsDetail.id,
-            content: this.floorInput
-          },
-          {}
-        )
-        .then(res => {
-          this.floorList = res.data;
-        });
+      if (this.loginUser != "") {
+        this.$http
+          .post(
+            "/api/bbs/addFloor",
+            {
+              user_account: this.loginUser,
+              bbs_id: this.bbsDetail.id,
+              content: this.floorInput
+            },
+            {}
+          )
+          .then(res => {
+            this.floorList = res.data;
+          });
+      } else {
+        this.$message("暂未登陆");
+      }
     },
     getAllFloor() {
       this.$http
@@ -93,7 +97,12 @@ export default {
         });
     },
     showCommentInput(floorindex) {
-      this.$set(this.commentFlag, floorindex, true);
+      for(var i = 0;i<this.commentFlag.length;i++){
+        if(this.commentFlag[i] == true){
+          this.$set(this.commentFlag, i, false);
+        }
+      }
+      this.$set(this.commentFlag, floorindex, true); //数组设置某个元素的值
     },
     hideCommentInput(floorindex) {
       this.$set(this.commentFlag, floorindex, false);
@@ -108,7 +117,7 @@ export default {
         this.commentInput[floorindex] = "回复 " + commentaccount + ":";
       }
     },
-    doComment(floorid, floorIndex,bbsid) {
+    doComment(floorid, floorIndex, bbsid) {
       if (this.loginUser == "") {
         this.$message("暂未登录");
       } else if (this.commentInput[floorIndex] == "") {
@@ -132,7 +141,7 @@ export default {
             "/api/comment/addComment",
             {
               floorid: floorid,
-              bbsid:bbsid,
+              bbsid: bbsid,
               content: commentcontent,
               commentaccount: commentaccount,
               user_account: this.loginUser
@@ -144,7 +153,7 @@ export default {
             this.commentInput[floorIndex] = "";
             this.$http
               .post(
-                "/api/comment/addAbout",
+                "/api/about/addAbout",
                 {
                   comment_id: res.data,
                   comment_account: commentaccount
@@ -182,10 +191,6 @@ export default {
       )
       .then(res => {
         this.floorList = res.data;
-        for (var i = 0; i < this.floorList.length; i++) {
-          this.commentInput.push("");
-          this.commentFlag.push(false);
-        }
       });
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");

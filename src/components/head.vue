@@ -26,7 +26,7 @@
       </el-dialog>
     </div>
     <div class="r not-login" v-if="loginUser==''">
-      <router-link tag="a" to="/registLogin">
+      <router-link tag="a" :to="{ path: '/registLogin'}" append exact-active-class = "_active">
         <el-button type="primary">登录</el-button>
       </router-link>
     </div>
@@ -34,8 +34,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  data() {
+  data: function() {
     return {
       loginUser: "",
       BBSdialog: false,
@@ -52,20 +53,23 @@ export default {
       hasAbout: ""
     };
   },
+  computed:mapState({
+    user:"user",//登录用户
+  }),
   mounted: function() {
     if (localStorage.getItem("loginUser")) {
       this.loginUser = localStorage.getItem("loginUser");
     }
     this.$http
-      .get("/api/comment/getAbout", {
+      .get("/api/about/getAbout", {
         params: {
           user_account: this.loginUser
         }
       })
       .then(res => {
-        if (res.data.length != 0) {
+        if (res.data != 0) {
           this.aboutNum = res.data.length;
-          console.log("aboutNum"+this.aboutNum)
+          console.log("aboutNum" + this.aboutNum);
           this.hasAbout = true;
         } else {
           this.hasAbout = false;
@@ -91,7 +95,7 @@ export default {
         )
         .then(res => {
           this.BBSdialog = false;
-          this.bbsList = res.data;
+          this.$store.state.allbbs = res.data
         });
     }
   }

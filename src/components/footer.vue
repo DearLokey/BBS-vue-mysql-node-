@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  data() {
-    return {};
+  data:function() {
+    return {}
   },
   mounted: function() {},
   methods: {},

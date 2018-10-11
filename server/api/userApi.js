@@ -83,7 +83,7 @@ router.post("/login", (req, res) => {
             }
           }
         );
-        res.send(searchresult[0]["account"]); //登录成功
+        res.send("0"); //登录成功
       }
     }
   });

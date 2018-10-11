@@ -3,6 +3,7 @@
 const userApi = require('./api/userApi')
 const bbsApi = require('./api/bbsApi')
 const commentApi = require('./api/commentApi')
+const aboutApi = require("./api/aboutApi")
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ app.use(cookieParser());
 app.use('/api/user', userApi);
 app.use('/api/bbs',bbsApi);
 app.use('/api/comment',commentApi);
+app.use('/api/about',aboutApi);
 
 // 监听端口
 app.listen(3000);

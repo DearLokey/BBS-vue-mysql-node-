@@ -31,7 +31,7 @@ export default {
   mounted: function() {
     this.$http
       .get(
-        "/api/comment/getAbout",
+        "/api/about/getAbout",
         {
           params: {
             user_account: localStorage.getItem("loginUser")
@@ -48,7 +48,7 @@ export default {
     bbsDetail(bbs_id, about_id) {
       this.$router.push({ path: "/bbsDetail/" + bbs_id });
       this.$http
-        .post("/api/comment/updateAbout", { about_id: about_id }, {})
+        .post("/api/about/updateAbout", { about_id: about_id }, {})
         .then(res => {});
     }
   },

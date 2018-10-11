@@ -8,7 +8,7 @@
         暂无数据
     </div>
     <ul class="bbsList">
-        <li class="bbs" v-for="bbs in bbsList">
+        <li class="bbs" v-for="bbs in allbbs">
             <p @click="bbsDetail(bbs['id'])">{{bbs['title']}}</p>
             <p>{{bbs['create_time']|moment("YYYY/MM/DD HH:mm")}}</p>
         </li>
@@ -22,11 +22,11 @@
 <script>
 import bbsheader from "@/components/head";
 import bbsfooter from "@/components/footer";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       loginUser: "",
-      bbsList: "",
       hasBBS: ""
     };
   },
@@ -34,24 +34,21 @@ export default {
     bbsheader,
     bbsfooter
   },
+  computed: mapState({
+    allbbs: "allbbs"
+  }),
   mounted: function() {
-    this.$http.get("/api/bbs/getAll", {}).then(res => {
-      if (res.data.length != 0) {
-        this.bbsList = res.data;
-        this.hasBBS = false;
-      } else {
-        this.hasBBS = true;
-      }
-    });
-    if (localStorage.getItem("loginUser")) {
-      this.loginUser = localStorage.getItem("loginUser");
+    console.log(localStorage.getItem("loginUser"));
+    this.$store.dispatch("getallbbs");
+    if (localStorage.getItem("loginuser")) {
+      this.loginuser = localStorage.getItem("loginuser");
     }
   },
   methods: {
     bbsDetail(id) {
       this.$router.push({ path: "/bbsDetail/" + id });
     }
-  },
+  }
 };
 </script>
 <style lang="less">
